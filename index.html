@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BatBot - WhatsApp Bot Runner (Dark Knight)</title>
+    <style>
+        :root {
+            --primary: #0f0f12;
+            --secondary: #1a1a24;
+            --accent: #9f8a4f;
+            --text: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --danger: #d9534f;
+            --success: #5cb85c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 15, 18, 0.85);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--accent);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .logo span {
+            color: var(--text);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background-color: #c5a95e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(159, 138, 79, 0.3);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            margin-left: 15px;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--accent);
+            color: var(--primary);
+        }
+        
+        .dashboard {
+            background-color: var(--secondary);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+        
+        .dashboard-header h3 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--accent);
+        }
+        
+        .console {
+            background-color: #000;
+            border-radius: 6px;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .console::before {
+            content: "Terminal";
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background-color: var(--secondary);
+            padding: 0 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .console-line {
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+        
+        .console-command {
+            color: var(--accent);
+        }
+        
+        .console-output {
+            color: var(--text);
+        }
+        
+        .console-error {
+            color: var(--danger);
+        }
+        
+        .console-success {
+            color: var(--success);
+        }
+        
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .control-card {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid #333;
+        }
+        
+        .control-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        
+        .control-card i {
+            font-size: 30px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .control-card h4 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+        
+        .control-card p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #333;
+            margin-top: 50px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 28px;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+            }
+            
+            .btn-outline {
+                margin-left: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/2504/2504921.png" alt="BatBot Logo">
+                <h1>BAT<span>BOT</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> Docs</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> Login</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="hero">
+            <h2>WhatsApp Bot Hosting Platform</h2>
+            <p>Run your WhatsApp bot in the cloud with our powerful hosting solution. Monitor, control, and scale your bot with ease. The night is darkest just before the dawn. And I promise you, the dawn is coming.</p>
+            <a href="#" class="btn">Deploy Your Bot</a>
+            <a href="#" class="btn btn-outline">Learn More</a>
+        </section>
+        
+        <section class="dashboard">
+            <div class="dashboard-header">
+                <h3><i class="fas fa-terminal"></i> Bot Console</h3>
+                <div>
+                    <button class="btn btn-outline" id="clear-console">Clear</button>
+                    <button class="btn" id="start-bot">Start Bot</button>
+                </div>
+            </div>
+            
+            <div class="console" id="console">
+                <div class="console-line console-command">$ npm init wa-bot</div>
+                <div class="console-line console-output">Initializing WhatsApp bot project...</div>
+                <div class="console-line console-output">Checking dependencies...</div>
+                <div class="console-line console-success">✓ All dependencies installed</div>
+                <div class="console-line console-command">$ node index.js</div>
+                <div class="console-line console-output">Starting WhatsApp bot...</div>
+                <div class="console-line console-output">Connecting to WhatsApp Web...</div>
+                <div class="console-line console-success">✓ Connected successfully</div>
+                <div class="console-line console-output">Bot is ready to receive messages</div>
+                <div class="console-line console-command">$ </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bot-script">Bot Script</label>
+                <textarea class="form-control" id="bot-script" rows="10" placeholder="Paste your bot script here...">const { Client } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+
+const client = new Client();
+
+client.on('qr', (qr) => {
+    qrcode.generate(qr, {small: true});
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.on('message', msg => {
+    if (msg.body === '!ping') {
+        msg.reply('pong');
+    }
+});
+
+client.initialize();</textarea>
+            </div>
+            
+            <div class="control-panel">
+                <div class="control-card">
+                    <i class="fas fa-power-off"></i>
+                    <h4>Start/Stop</h4>
+                    <p>Control your bot's running state</p>
+                </div>
+                <div class="control-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Performance</h4>
+                    <p>Monitor resource usage</p>
+                </div>
+                <div class="control-card">
+                    <i class="fas fa-history"></i>
+                    <h4>Logs</h4>
+                    <p>View historical activity</p>
+                </div>
+                <div class="control-card">
+                    <i class="fas fa-cogs"></i>
+                    <h4>Settings</h4>
+                    <p>Configure bot parameters</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2023 BatBot Hosting. "It's not who I am underneath, but what I do that defines me."</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.getElementById('start-bot').addEventListener('click', function() {
+            const consoleElement = document.getElementById('console');
+            const newLine = document.createElement('div');
+            newLine.className = 'console-line console-command';
+            newLine.textContent = '$ node bot.js';
+            consoleElement.appendChild(newLine);
+            
+            const outputLines = [
+                {text: 'Restarting WhatsApp bot...', type: 'output'},
+                {text: 'Clearing previous session...', type: 'output'},
+                {text: 'Generating QR code...', type: 'success'},
+                {text: 'Scan the QR code to continue', type: 'output'},
+                {text: 'Waiting for authentication...', type: 'output'},
+                {text: '✓ Authenticated successfully', type: 'success'},
+                {text: 'Bot is now running', type: 'output'}
+            ];
+            
+            let delay = 500;
+            outputLines.forEach(line => {
+                setTimeout(() => {
+                    const newOutput = document.createElement('div');
+                    newOutput.className = `console-line console-${line.type}`;
+                    newOutput.textContent = line.text;
+                    consoleElement.appendChild(newOutput);
+                    consoleElement.scrollTop = consoleElement.scrollHeight;
+                }, delay);
+                delay += 500;
+            });
+            
+            setTimeout(() => {
+                const newCommand = document.createElement('div');
+                newCommand.className = 'console-line console-command';
+                newCommand.textContent = '$ ';
+                consoleElement.appendChild(newCommand);
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+            }, delay + 500);
+            
+            this.textContent = 'Restart Bot';
+        });
+        
+        document.getElementById('clear-console').addEventListener('click', function() {
+            const consoleElement = document.getElementById('console');
+            consoleElement.innerHTML = '';
+            
+            const newCommand = document.createElement('div');
+            newCommand.className = 'console-line console-command';
+            newCommand.textContent = '$ ';
+            consoleElement.appendChild(newCommand);
+        });
+    </script>
+</body>
+</html>
